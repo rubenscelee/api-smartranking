@@ -12,12 +12,8 @@ export const CategoriaSchema = new mongoose.Schema({
   ],
   jogadores: [
     {
-      nome: { type: String },
-      telefoneCelular: { type: String },
-      email: { type: String },
-      ranking: { type: String },
-      posicaoRanking: { type: Number },
-      urlFotoJogador: { type: String }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Jogador"
     }
   ]
 },

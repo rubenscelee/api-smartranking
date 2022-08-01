@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-container
+    restart: always
+    volumes:
+      - ./api:/home/node/app
+    ports:
+     - "8080:8080"   
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10m"
+
+
+  
+      

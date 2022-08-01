@@ -12,6 +12,7 @@ export const CategoriaSchema = new mongoose.Schema({
   ],
   jogadores: [
     {
+      //Faz o vínculo de jogadores com a categoria
       type: mongoose.Schema.Types.ObjectId,
       ref: "Jogador"
     }

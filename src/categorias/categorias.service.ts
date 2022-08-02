@@ -88,9 +88,6 @@ export class CategoriasService {
     categoriaEncontrada.jogadores.push(idJogador);
     await this.categoriaModel.findByIdAndUpdate({categoria}, {$set: categoriaEncontrada}).exec();
 
-
-
   }
-
 
 }

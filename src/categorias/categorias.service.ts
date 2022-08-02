@@ -29,34 +29,43 @@ export class CategoriasService {
     return await this.categoriaModel.find().exec();
   }
 
-  async consultarCategoriaId(id: string): Promise<Categoria> {
-    const categoriaEncontrada = await this.categoriaModel.findOne({id}).exec();
+  async consultarCategoriaId(categoria: string): Promise<Categoria> {
+    const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
   
     return categoriaEncontrada;
   }
 
-  async deletarCategoria(id: string): Promise<any>{
-    const categoriaParaDeletar = await this.categoriaModel.findOne({id}).exec();
+  async deletarCategoria(categoria: string): Promise<any>{
+    const categoriaParaDeletar = await this.categoriaModel.findOne({categoria}).exec();
       if(!categoriaParaDeletar){
-        throw new NotFoundException(`Jogador com o id ${id} não encontrado`);
+        throw new NotFoundException(`Jogador com o id ${categoria} não encontrado`);
       }
       
-    return await this.categoriaModel.deleteOne({id}).exec();
+    return await this.categoriaModel.deleteOne({categoria}).exec();
     
   }
 
-  async atualizarCategoria(id: string, atualizarCategoriaDto: atualizarCategoriaDto): Promise<any> {
-    const categoriaEncontrada = await this.categoriaModel.findOne({id}).exec();
+  async atualizarCategoria(categoria: string, atualizarCategoriaDto: atualizarCategoriaDto): Promise<any> {
+    const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
 
     if (!categoriaEncontrada) {
-      throw new NotFoundException(`Categoria com o id ${id} não encontrada`)
+      throw new NotFoundException(`Categoria com o id ${categoria} não encontrada`)
     }
 
-    await this.categoriaModel.findOneAndUpdate({id : categoriaEncontrada.id},
+    await this.categoriaModel.findOneAndUpdate({categoria : categoriaEncontrada.categoria},
       {$set: atualizarCategoriaDto}
       ).exec();
 
-    return this.consultarCategoriaId(id);
+    return this.consultarCategoriaId(categoria);
+  }
+
+  //Adiciona um jogador a categoria
+  async atribuirCategoriaJogador(params: string[]): Promise<void> {
+    
+    const categoria = params['categoria'];
+    const idJogador = params['idJogador']
+
+
   }
 
 

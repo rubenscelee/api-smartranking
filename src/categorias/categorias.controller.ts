@@ -22,19 +22,25 @@ export class CategoriasController {
     return await this.categoriaService.consultarCategorias();
   }
 
-  @Get(':id')
-  async consultarCategoriaId(@Param()id: string): Promise<Categoria>{
-    return await this.categoriaService.consultarCategoriaId(id);
+  @Get('/:categoria')
+  async consultarCategoriaId(@Param('categoria')categoria: string): Promise<Categoria>{
+    return await this.categoriaService.consultarCategoriaId(categoria);
   }
 
-  @Delete(':id')
-  async deletarCategoria(@Param() id: string): Promise<Categoria>{
-    return await this.categoriaService.deletarCategoria(id);
+  @Delete('/:categoria')
+  async deletarCategoria(@Param('categoria') categoria: string): Promise<Categoria>{
+    return await this.categoriaService.deletarCategoria(categoria);
   }
 
-  @Put(':id')
-  async atualizarCategoria(@Param() id: string, @Body() atualizarCategoriaDto: atualizarCategoriaDto): Promise<any> {
-    return await this.categoriaService.atualizarCategoria(id, atualizarCategoriaDto);
+  @Put('/:categoria')
+  @UsePipes(ValidationPipe)    
+  async atualizarCategoria(@Param('categoria') categoria: string, @Body() atualizarCategoriaDto: atualizarCategoriaDto): Promise<any> {
+    return await this.categoriaService.atualizarCategoria(categoria, atualizarCategoriaDto);
+  }
+
+  @Post('/:categoria/jogadores/:idJogador')  
+  async atribuirCategoriaJogador(@Param() params: string[]): Promise<void>{
+    return await this.categoriaService.atribuirCategoriaJogador(params);
   }
 
 }

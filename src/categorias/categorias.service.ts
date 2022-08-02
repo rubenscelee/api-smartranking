@@ -4,12 +4,14 @@ import { Model } from 'mongoose';
 import { CriarCategoriaDto } from './dtos/criar-categoria.dto';
 import { Categoria } from './interfaces/categoria.interface';
 import { atualizarCategoriaDto } from './dtos/atualizar-categoria-dto';
+import { JogadoresService } from 'src/jogadores/jogadores.service';
 
 @Injectable()
 export class CategoriasService {
    
   constructor(
-    @InjectModel('Categoria') private readonly categoriaModel: Model<Categoria>
+    @InjectModel('Categoria') private readonly categoriaModel: Model<Categoria>,
+    private readonly JogadoresService: JogadoresService
   ){}
 
   async criarCategoria(CriarCategoriaDto: CriarCategoriaDto): Promise<CriarCategoriaDto> {
@@ -26,7 +28,8 @@ export class CategoriasService {
   } 
 
   async consultarCategorias(): Promise<Categoria[]> {
-    return await this.categoriaModel.find().exec();
+    return await this.categoriaModel.find().populate("jogadores").exec();
+    //método populate faz com que todas as informações da collection jogadores apareça na consulta
   }
 
   async consultarCategoriaId(categoria: string): Promise<Categoria> {
@@ -38,11 +41,12 @@ export class CategoriasService {
   async deletarCategoria(categoria: string): Promise<any>{
     const categoriaParaDeletar = await this.categoriaModel.findOne({categoria}).exec();
       if(!categoriaParaDeletar){
-        throw new NotFoundException(`Jogador com o id ${categoria} não encontrado`);
+        throw new NotFoundException(`Categoria ${categoria} não encontrada`);
       }
       
     return await this.categoriaModel.deleteOne({categoria}).exec();
-    
+   
+
   }
 
   async atualizarCategoria(categoria: string, atualizarCategoriaDto: atualizarCategoriaDto): Promise<any> {
@@ -63,7 +67,27 @@ export class CategoriasService {
   async atribuirCategoriaJogador(params: string[]): Promise<void> {
     
     const categoria = params['categoria'];
-    const idJogador = params['idJogador']
+    const idJogador = params['idJogador'];
+
+    const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
+
+    //Verifica se o jogador já está cadastrado na categoria
+    const jogadorJaCadastradoCategoria = await this.categoriaModel.find({categoria}).where('jogadores').in(idJogador).exec();
+
+    await this.JogadoresService.consultarJogadorPeloId(idJogador);
+
+
+    if(!categoriaEncontrada){
+      throw new BadRequestException(`Categoria ${categoria} não cadastrada!`);
+    }
+
+    if(jogadorJaCadastradoCategoria.length > 0){
+      throw new BadRequestException(`Jogador ${idJogador} já cadastrado na categoria ${categoria}!`);
+    }
+
+    categoriaEncontrada.jogadores.push(idJogador);
+    await this.categoriaModel.findByIdAndUpdate({categoria}, {$set: categoriaEncontrada}).exec();
+
 
 
   }
